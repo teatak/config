@@ -51,7 +51,7 @@ func From(path, bootstrap string) {
 			}
 		}
 	}
-	if env == "" {
+	if env != "" {
 		for _, file := range strings.Split(env, ",") {
 			b, e := ioutil.ReadFile(path + "/" + file + ".yml")
 			if e != nil {
