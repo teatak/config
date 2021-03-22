@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 )
@@ -35,12 +34,12 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 	}
 }
 
-func From(path, bootstrap string) {
+func init() {
 	//load config files
 	buff := bytes.Buffer{}
 	env := os.Getenv("config")
 	if env == "" {
-		app, e := ioutil.ReadFile(path + "/" + bootstrap)
+		app, e := ioutil.ReadFile("./config/app.yml")
 		if e != nil {
 			fmt.Printf("File error: %v\n", e)
 			os.Exit(1)
@@ -52,11 +51,10 @@ func From(path, bootstrap string) {
 			}
 		}
 	}
-	log.Println(env)
 	if env != "" {
 
 		for _, file := range strings.Split(env, ",") {
-			b, e := ioutil.ReadFile(path + "/" + file + ".yml")
+			b, e := ioutil.ReadFile("./config/" + file + ".yml")
 			if e != nil {
 				fmt.Printf("File error: %v\n", e)
 			} else {
@@ -65,5 +63,4 @@ func From(path, bootstrap string) {
 		}
 	}
 	_ = yaml.Unmarshal(buff.Bytes(), &loader)
-	log.Println(loader)
 }

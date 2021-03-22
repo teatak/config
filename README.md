@@ -1,10 +1,11 @@
 # config
 
 ## yml
-|-app.yml<br/>
-|-common.yml<br/>
-|-dev.yml<br/>
-|-prod.yml<br/>
+|-config<br/>
+&nbsp;|-app.yml<br/>
+&nbsp;|-common.yml<br/>
+&nbsp;|-dev.yml<br/>
+&nbsp;|-prod.yml<br/>
 
 app.yml
 ```yaml
@@ -59,10 +60,6 @@ func init() {
 
 ```
 
-## load init
-```go
-config.From("./config","app.yml")
-```
 
 ## run as env
 ```bash
