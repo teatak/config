@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
@@ -51,7 +52,9 @@ func From(path, bootstrap string) {
 			}
 		}
 	}
+	log.Println(env)
 	if env != "" {
+
 		for _, file := range strings.Split(env, ",") {
 			b, e := ioutil.ReadFile(path + "/" + file + ".yml")
 			if e != nil {
@@ -62,4 +65,5 @@ func From(path, bootstrap string) {
 		}
 	}
 	_ = yaml.Unmarshal(buff.Bytes(), &loader)
+	log.Println(loader)
 }
