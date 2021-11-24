@@ -35,7 +35,7 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 	}
 }
 
-func init() {
+func LoadConfig() {
 	//load config files
 	buff := bytes.Buffer{}
 	env := os.Getenv("config")
