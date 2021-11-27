@@ -53,7 +53,6 @@ func LoadConfig() {
 		}
 	}
 	if env != "" {
-
 		for _, file := range strings.Split(env, ",") {
 			b, e := ioutil.ReadFile("./config/" + file + ".yml")
 			if e != nil {
