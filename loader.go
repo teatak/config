@@ -21,13 +21,17 @@ func (c *config) get(key string) interface{} {
 	return (*c)[key]
 }
 
+var loader = &config{}
+var initialized = false
+
 func Load(section Section) {
+	if !initialized {
+		LoadConfig()
+	}
 	s := loader.get(section.SectionName())
 	data, _ := yaml.Marshal(s)
 	_ = yaml.Unmarshal(data, section)
 }
-
-var loader = &config{}
 
 func appendByte(buff *bytes.Buffer, b []byte) {
 	buff.Write(b)
@@ -36,11 +40,8 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 	}
 }
 
-func LoadConfig(configPath string) {
+func LoadConfig() {
 	_path := "./config/app.yml"
-	if configPath != "" {
-		_path = configPath
-	}
 	_dir := path.Dir(_path)
 	//load config files
 	buff := bytes.Buffer{}
@@ -68,5 +69,6 @@ func LoadConfig(configPath string) {
 			}
 		}
 	}
+	initialized = true
 	_ = yaml.Unmarshal(buff.Bytes(), &loader)
 }
