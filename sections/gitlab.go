@@ -3,7 +3,7 @@ package sections
 import "github.com/teatak/config"
 
 type gitlab struct {
-	ClientId     string `yaml:"clientId,omitempty"`
+	ClientID     string `yaml:"clientID,omitempty"`
 	ClientSecret string `yaml:"clientSecret,omitempty"`
 	RedirectUri  string `yaml:"redirectUri,omitempty"`
 }

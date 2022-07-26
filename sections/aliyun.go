@@ -3,7 +3,7 @@ package sections
 import "github.com/teatak/config"
 
 type aliyun struct {
-	AccessKeyId  string `yaml:"accessKeyId,omitempty"`
+	AccessKeyID  string `yaml:"accessKeyID,omitempty"`
 	AccessSecret string `yaml:"accessSecret,omitempty"`
 }
 
