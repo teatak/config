@@ -16,8 +16,12 @@ func (s alipaySection) SectionName() string {
 	return "alipay"
 }
 
-var AliPay = alipaySection{}
+func (s *alipaySection) Default() *alipay {
+	return Alipay["default"]
+}
+
+var Alipay = alipaySection{}
 
 func init() {
-	config.Load(AliPay)
+	config.Load(Alipay)
 }

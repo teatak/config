@@ -2,8 +2,8 @@ package config
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path"
 	"strings"
@@ -49,8 +49,8 @@ func LoadConfig() {
 	if env == "" {
 		app, e := ioutil.ReadFile(_path)
 		if e != nil {
-			fmt.Printf("File error: %v\n", e)
-			os.Exit(1)
+			log.Printf("app file error: %v\n", e)
+			// os.Exit(1)
 		} else {
 			appendByte(&buff, app)
 			_ = yaml.Unmarshal(app, &loader)
@@ -63,7 +63,7 @@ func LoadConfig() {
 		for _, file := range strings.Split(env, ",") {
 			b, e := ioutil.ReadFile(_dir + "/" + file + ".yml")
 			if e != nil {
-				fmt.Printf("File error: %v\n", e)
+				log.Printf("file error: %v\n", e)
 			} else {
 				appendByte(&buff, b)
 			}
