@@ -6,6 +6,7 @@ type server struct {
 	Environment string `yaml:"environment,omitempty"`
 	Url         string `yaml:"url,omitempty"`
 	ShortUrl    string `yaml:"shortUrl,omitempty"`
+	Domain      string `yaml:"domain,omitempty"`
 	Name        string `yaml:"name,omitempty"`
 	Port        int    `yaml:"port,omitempty"`
 }
