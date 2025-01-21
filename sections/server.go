@@ -3,12 +3,12 @@ package sections
 import "github.com/teatak/config"
 
 type server struct {
-	Environment string `yaml:"environment,omitempty"`
-	Url         string `yaml:"url,omitempty"`
-	ShortUrl    string `yaml:"shortUrl,omitempty"`
-	Origin      string `yaml:"origin,omitempty"`
-	Name        string `yaml:"name,omitempty"`
-	Port        int    `yaml:"port,omitempty"`
+	Environment    string   `yaml:"environment,omitempty"`
+	Url            string   `yaml:"url,omitempty"`
+	ShortUrl       string   `yaml:"shortUrl,omitempty"`
+	AllowedOrigins []string `yaml:"allowedOrigins,omitempty"`
+	Name           string   `yaml:"name,omitempty"`
+	Port           int      `yaml:"port,omitempty"`
 }
 
 func (s *server) SectionName() string {
