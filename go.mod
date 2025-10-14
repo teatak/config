@@ -1,4 +1,4 @@
-module github.com/teatak/config
+module github.com/teatak/config/v2
 
 go 1.13
 
