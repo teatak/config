@@ -1,6 +1,6 @@
 package sections
 
-import "github.com/teatak/config"
+import "github.com/teatak/config/v2"
 
 type wechat struct {
 	AppID     string `yaml:"appID,omitempty"`

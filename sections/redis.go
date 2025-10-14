@@ -1,6 +1,6 @@
 package sections
 
-import "github.com/teatak/config"
+import "github.com/teatak/config/v2"
 
 type redis struct {
 	// 单个主机或集群配置

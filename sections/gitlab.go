@@ -1,6 +1,6 @@
 package sections
 
-import "github.com/teatak/config"
+import "github.com/teatak/config/v2"
 
 type gitlab struct {
 	ClientID     string `yaml:"clientID,omitempty"`

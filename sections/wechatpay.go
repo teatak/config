@@ -1,6 +1,6 @@
 package sections
 
-import "github.com/teatak/config"
+import "github.com/teatak/config/v2"
 
 type wechatpay struct {
 	MchID      string `yaml:"mchID,omitempty"`
