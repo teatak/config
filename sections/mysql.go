@@ -3,8 +3,7 @@ package sections
 import "github.com/teatak/config/v2"
 
 type mysql struct {
-	Uri      string `yaml:"uri,omitempty"`
-	Database string `yaml:"database,omitempty"`
+	DSN string `yaml:"dsn,omitempty"`
 }
 
 type mysqlSection map[string]*mysql

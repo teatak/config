@@ -3,7 +3,7 @@ package sections
 import "github.com/teatak/config/v2"
 
 type mongo struct {
-	Uri      string `yaml:"uri,omitempty"`
+	URI      string `yaml:"uri,omitempty"`
 	Database string `yaml:"database,omitempty"`
 }
 
