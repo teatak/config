@@ -2,7 +2,6 @@ package config
 
 import (
 	"bytes"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -47,7 +46,7 @@ func LoadConfig() {
 	buff := bytes.Buffer{}
 	env := os.Getenv("config")
 	if env == "" {
-		app, e := ioutil.ReadFile(_path)
+		app, e := os.ReadFile(_path)
 		if e != nil {
 			log.Printf("app file error: %v\n", e)
 			// os.Exit(1)
@@ -61,7 +60,7 @@ func LoadConfig() {
 	}
 	if env != "" {
 		for _, file := range strings.Split(env, ",") {
-			b, e := ioutil.ReadFile(_dir + "/" + file + ".yml")
+			b, e := os.ReadFile(_dir + "/" + file + ".yml")
 			if e != nil {
 				log.Printf("file error: %v\n", e)
 			} else {
