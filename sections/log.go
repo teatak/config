@@ -3,8 +3,8 @@ package sections
 import "github.com/teatak/config/v2"
 
 type log struct {
-	Handler  string `yaml:"handler,omitempty"`
-	LogLevel string `yaml:"logLevel,omitempty"`
+	Handler string `yaml:"handler,omitempty"`
+	Level   string `yaml:"level,omitempty"`
 }
 
 func (s *log) SectionName() string {
