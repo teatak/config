@@ -7,7 +7,6 @@ type server struct {
 	Url          string   `yaml:"url,omitempty"`
 	ShortUrl     string   `yaml:"shortUrl,omitempty"`
 	AllowOrigins []string `yaml:"allowOrigins,omitempty"`
-	LogLevel     string   `yaml:"logLevel,omitempty"`
 	Name         string   `yaml:"name,omitempty"`
 	Port         int      `yaml:"port,omitempty"`
 }
