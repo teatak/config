@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 )
@@ -20,16 +21,26 @@ func (c *config) get(key string) interface{} {
 	return (*c)[key]
 }
 
-var loader = &config{}
-var initialized = false
+var (
+	loader = &config{}
+	once   sync.Once
+)
 
+// Load 加载配置到指定的 section 结构体中
 func Load(section Section) {
-	if !initialized {
-		LoadConfig()
-	}
+	once.Do(LoadConfig)
 	s := loader.get(section.SectionName())
-	data, _ := yaml.Marshal(s)
-	_ = yaml.Unmarshal(data, section)
+	if s == nil {
+		return
+	}
+	data, err := yaml.Marshal(s)
+	if err != nil {
+		log.Printf("marshal section %s error: %v\n", section.SectionName(), err)
+		return
+	}
+	if err := yaml.Unmarshal(data, section); err != nil {
+		log.Printf("unmarshal section %s error: %v\n", section.SectionName(), err)
+	}
 }
 
 func appendByte(buff *bytes.Buffer, b []byte) {
@@ -39,35 +50,54 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 	}
 }
 
+// LoadConfig 加载配置文件
+// 支持通过环境变量 CONFIG_PATH 指定配置文件路径，默认为 ./config/app.yml
+// 支持通过环境变量 config 指定额外加载的配置文件（逗号分隔）
 func LoadConfig() {
-	_path := "./config/app.yml"
-	_dir := path.Dir(_path)
-	//load config files
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		configPath = "./config/app.yml"
+	}
+	configDir := filepath.Dir(configPath)
+
 	buff := bytes.Buffer{}
 	env := os.Getenv("config")
+
 	if env == "" {
-		app, e := os.ReadFile(_path)
-		if e != nil {
-			log.Printf("app file error: %v\n", e)
-			// os.Exit(1)
+		app, err := os.ReadFile(configPath)
+		if err != nil {
+			log.Printf("app file error: %v\n", err)
 		} else {
 			appendByte(&buff, app)
-			_ = yaml.Unmarshal(app, &loader)
-			if c := loader.get("config"); c != nil {
-				env = c.(string)
+			if err := yaml.Unmarshal(app, &loader); err != nil {
+				log.Printf("unmarshal app.yml error: %v\n", err)
+			} else if c := loader.get("config"); c != nil {
+				if configVal, ok := c.(string); ok {
+					env = configVal
+				}
 			}
 		}
 	}
+
 	if env != "" {
 		for _, file := range strings.Split(env, ",") {
-			b, e := os.ReadFile(_dir + "/" + file + ".yml")
-			if e != nil {
-				log.Printf("file error: %v\n", e)
+			file = strings.TrimSpace(file)
+			if file == "" {
+				continue
+			}
+			filePath := filepath.Join(configDir, file+".yml")
+			b, err := os.ReadFile(filePath)
+			if err != nil {
+				log.Printf("file %s error: %v\n", filePath, err)
 			} else {
 				appendByte(&buff, b)
 			}
 		}
 	}
-	initialized = true
-	_ = yaml.Unmarshal(buff.Bytes(), &loader)
+
+	if buff.Len() > 0 {
+		if err := yaml.Unmarshal(buff.Bytes(), &loader); err != nil {
+			log.Printf("unmarshal config error: %v\n", err)
+		}
+	}
 }
