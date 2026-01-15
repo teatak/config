@@ -3,13 +3,13 @@ package sections
 import "github.com/teatak/config/v2"
 
 type mongo struct {
-	URI             string `yaml:"uri,omitempty"`
-	Database        string `yaml:"database,omitempty"`
-	ConnectTimeout  uint64 `yaml:"connectTimeout,omitempty"` //second
-	MaxPoolSize     uint64 `yaml:"maxPoolSize,omitempty"`
-	MinPoolSize     uint64 `yaml:"minPoolSize,omitempty"`
-	MaxConnecting   uint64 `yaml:"maxConnecting,omitempty"`
-	MaxConnIdleTime uint64 `yaml:"maxConnIdleTime,omitempty"` //second
+	URI               string `yaml:"uri,omitempty"`
+	Database          string `yaml:"database,omitempty"`
+	MaxPoolSize       uint64 `yaml:"maxPoolSize,omitempty"`
+	MinPoolSize       uint64 `yaml:"minPoolSize,omitempty"`
+	ConnectTimeoutMS  uint64 `yaml:"connectTimeoutMS,omitempty"`  //ms
+	MaxConnIdleTimeMS uint64 `yaml:"maxConnIdleTimeMS,omitempty"` //ms
+	MaxConnecting     uint64 `yaml:"maxConnecting,omitempty"`
 }
 
 type mongoSection map[string]*mongo
