@@ -56,7 +56,13 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 func LoadConfig() {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		configPath = "./config/app.yml"
+		if _, err := os.Stat("./config/app.yml"); err == nil {
+			configPath = "./config/app.yml"
+		} else if _, err := os.Stat("./config/app.yaml"); err == nil {
+			configPath = "./config/app.yaml"
+		} else {
+			configPath = "./config/app.yml"
+		}
 	}
 	configDir := filepath.Dir(configPath)
 
@@ -86,6 +92,12 @@ func LoadConfig() {
 				continue
 			}
 			filePath := filepath.Join(configDir, file+".yml")
+			if _, err := os.Stat(filePath); err != nil {
+				filePathYaml := filepath.Join(configDir, file+".yaml")
+				if _, err := os.Stat(filePathYaml); err == nil {
+					filePath = filePathYaml
+				}
+			}
 			b, err := os.ReadFile(filePath)
 			if err != nil {
 				log.Printf("file %s error: %v\n", filePath, err)
