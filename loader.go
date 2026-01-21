@@ -5,8 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
+	"unicode"
 
 	"gopkg.in/yaml.v3"
 )
@@ -15,8 +17,142 @@ type Section interface {
 	SectionName() string
 }
 
+// Reloader 是一个可选接口，用于自定义 reload 行为
+type Reloader interface {
+	Reload(data interface{})
+}
+
 type config map[string]interface{}
 
+// autoSection 是一个自动推断名称的 Section 包装器
+type autoSection[T any] struct {
+	ptr  *T
+	name string
+}
+
+func (a *autoSection[T]) SectionName() string {
+	return a.name
+}
+
+func (a *autoSection[T]) Reload(data interface{}) {
+	if data == nil {
+		return
+	}
+	b, err := yaml.Marshal(data)
+	if err != nil {
+		log.Printf("marshal section %s error: %v\n", a.name, err)
+		return
+	}
+	if err := yaml.Unmarshal(b, a.ptr); err != nil {
+		log.Printf("unmarshal section %s error: %v\n", a.name, err)
+	}
+}
+
+// lcFirst 将首字母转为小写
+func lcFirst(s string) string {
+	if s == "" {
+		return s
+	}
+	r := []rune(s)
+	r[0] = unicode.ToLower(r[0])
+	return string(r)
+}
+
+// Register 使用泛型注册配置 section，自动从结构体名称推断 section 名称
+// 用法: var Server = config.Register(&server{})
+// 结构体名称 "server" 会自动作为 YAML 的 section 名称
+func Register[T any](ptr *T) *T {
+	t := reflect.TypeOf(ptr).Elem()
+	name := lcFirst(t.Name())
+
+	wrapper := &autoSection[T]{ptr: ptr, name: name}
+
+	mu.Lock()
+	registry = append(registry, wrapper)
+	mu.Unlock()
+
+	once.Do(LoadConfig)
+
+	mu.RLock()
+	defer mu.RUnlock()
+	reloadAutoSection(wrapper)
+
+	return ptr
+}
+
+func reloadAutoSection[T any](a *autoSection[T]) {
+	s := loader.get(a.name)
+	if s == nil {
+		return
+	}
+	data, err := yaml.Marshal(s)
+	if err != nil {
+		log.Printf("marshal section %s error: %v\n", a.name, err)
+		return
+	}
+	if err := yaml.Unmarshal(data, a.ptr); err != nil {
+		log.Printf("unmarshal section %s error: %v\n", a.name, err)
+	}
+}
+
+// autoMapSection 是一个自动推断名称的 Map Section 包装器
+type autoMapSection[K comparable, V any] struct {
+	ptr  *map[K]V
+	name string
+}
+
+func (a *autoMapSection[K, V]) SectionName() string {
+	return a.name
+}
+
+func (a *autoMapSection[K, V]) Reload(data interface{}) {
+	if data == nil {
+		return
+	}
+	b, err := yaml.Marshal(data)
+	if err != nil {
+		log.Printf("marshal section %s error: %v\n", a.name, err)
+		return
+	}
+	if err := yaml.Unmarshal(b, a.ptr); err != nil {
+		log.Printf("unmarshal section %s error: %v\n", a.name, err)
+	}
+}
+
+// RegisterMap 使用泛型注册 map 类型的配置 section
+// 用法: var Mongo = config.RegisterMap[string, *mongo]("mongo")
+// 适用于需要多实例配置的场景，如数据库连接池
+func RegisterMap[K comparable, V any](name string) map[K]V {
+	m := make(map[K]V)
+	wrapper := &autoMapSection[K, V]{ptr: &m, name: name}
+
+	mu.Lock()
+	registry = append(registry, wrapper)
+	mu.Unlock()
+
+	once.Do(LoadConfig)
+
+	mu.RLock()
+	defer mu.RUnlock()
+	reloadAutoMapSection(wrapper)
+
+	return m
+}
+
+func reloadAutoMapSection[K comparable, V any](a *autoMapSection[K, V]) {
+	s := loader.get(a.name)
+	if s == nil {
+		return
+	}
+	data, err := yaml.Marshal(s)
+	if err != nil {
+		log.Printf("marshal section %s error: %v\n", a.name, err)
+		return
+	}
+	if err := yaml.Unmarshal(data, a.ptr); err != nil {
+		log.Printf("unmarshal section %s error: %v\n", a.name, err)
+	}
+}
 
 var (
 	loader   = &config{}
@@ -78,7 +214,7 @@ func Load(section Section) {
 	mu.Unlock()
 
 	once.Do(LoadConfig)
-	
+
 	mu.RLock()
 	defer mu.RUnlock()
 	reloadSection(section)
@@ -89,6 +225,12 @@ func reloadSection(section Section) {
 	if s == nil {
 		return
 	}
+	// 优先使用 Reloader 接口
+	if r, ok := section.(Reloader); ok {
+		r.Reload(s)
+		return
+	}
+	// 降级到原始方式
 	data, err := yaml.Marshal(s)
 	if err != nil {
 		log.Printf("marshal section %s error: %v\n", section.SectionName(), err)
@@ -117,6 +259,8 @@ func appendByte(buff *bytes.Buffer, b []byte) {
 // 支持通过环境变量 CONFIG_PATH 指定配置文件路径，默认为 ./config/app.yml
 // 支持通过环境变量 config 指定额外加载的配置文件（逗号分隔）
 func LoadConfig() {
+	mu.Lock()
+	defer mu.Unlock()
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		if _, err := os.Stat("./config/app.yml"); err == nil {

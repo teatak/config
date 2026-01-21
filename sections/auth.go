@@ -7,10 +7,6 @@ type auth struct {
 	OAuth2    map[string]OAuth2 `yaml:"oauth2" json:"oauth2"`
 }
 
-func (c *auth) SectionName() string {
-	return "auth"
-}
-
 type OAuth2 struct {
 	ClientID     string   `yaml:"client_id"`
 	ClientSecret string   `yaml:"client_secret"`
@@ -18,8 +14,4 @@ type OAuth2 struct {
 	Scopes       []string `yaml:"scopes"`
 }
 
-var Auth = auth{}
-
-func init() {
-	config.Load(&Auth)
-}
+var Auth = config.Register(&auth{})

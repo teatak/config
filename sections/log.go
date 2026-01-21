@@ -7,12 +7,4 @@ type log struct {
 	Level   string `yaml:"level,omitempty"`
 }
 
-func (s *log) SectionName() string {
-	return "log"
-}
-
-var Log = &log{}
-
-func init() {
-	config.Load(Log)
-}
+var Log = config.Register(&log{})

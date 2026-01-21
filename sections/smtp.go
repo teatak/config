@@ -9,12 +9,4 @@ type smtp struct {
 	Password string `yaml:"password,omitempty"`
 }
 
-func (s *smtp) SectionName() string {
-	return "smtp"
-}
-
-var Smtp = &smtp{}
-
-func init() {
-	config.Load(Smtp)
-}
+var Smtp = config.Register(&smtp{})

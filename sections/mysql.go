@@ -8,16 +8,8 @@ type mysql struct {
 
 type mysqlSection map[string]*mysql
 
-func (s *mysqlSection) SectionName() string {
-	return "mysql"
+func (s mysqlSection) Default() *mysql {
+	return s["default"]
 }
 
-func (s *mysqlSection) Default() *mysql {
-	return Mysql["default"]
-}
-
-var Mysql = mysqlSection{}
-
-func init() {
-	config.Load(&Mysql)
-}
+var Mysql = mysqlSection(config.RegisterMap[string, *mysql]("mysql"))

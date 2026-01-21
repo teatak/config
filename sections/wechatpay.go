@@ -13,12 +13,8 @@ type wechatpay struct {
 
 type wechatpaySection map[string]*wechatpay
 
-func (s wechatpaySection) SectionName() string {
-	return "wechatpay"
+func (s wechatpaySection) Default() *wechatpay {
+	return s["default"]
 }
 
-var WechatPay = wechatpaySection{}
-
-func init() {
-	config.Load(WechatPay)
-}
+var WechatPay = wechatpaySection(config.RegisterMap[string, *wechatpay]("wechatpay"))

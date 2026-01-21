@@ -1,0 +1,13 @@
+auth:
+  jwt_secret: "your-super-secret-key-change-it"
+  oauth2:
+    github:
+      client_id: "your_github_client_id"
+      client_secret: "your_github_client_secret"
+      redirect_url: "http://localhost:8081/auth/callback/github"
+      scopes: ["user:email"]
+    google:
+      client_id: "your_google_client_id"
+      client_secret: "your_google_client_secret"
+      redirect_url: "http://localhost:8081/auth/callback/google"
+      scopes: ["openid", "profile", "email"]

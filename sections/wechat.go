@@ -9,12 +9,8 @@ type wechat struct {
 
 type wechatSection map[string]*wechat
 
-func (s wechatSection) SectionName() string {
-	return "wechat"
+func (s wechatSection) Default() *wechat {
+	return s["default"]
 }
 
-var Wechat = wechatSection{}
-
-func init() {
-	config.Load(Wechat)
-}
+var Wechat = wechatSection(config.RegisterMap[string, *wechat]("wechat"))

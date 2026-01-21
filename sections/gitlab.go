@@ -8,12 +8,4 @@ type gitlab struct {
 	RedirectUri  string `yaml:"redirectUri,omitempty"`
 }
 
-func (s *gitlab) SectionName() string {
-	return "gitlab"
-}
-
-var Gitlab = &gitlab{}
-
-func init() {
-	config.Load(Gitlab)
-}
+var Gitlab = config.Register(&gitlab{})

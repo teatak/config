@@ -1,0 +1,34 @@
+server:
+  environment: dev
+  url: http://localhost:8080
+  shortUrl: localhost:8080
+  allowOrigins:
+    - "*"
+  name: unicorn-gateway
+  port: 8080
+
+log:
+  level: DEBUG
+
+redis:
+  default:
+    addrs:
+      - localhost:6379
+    password: admin
+    db: 2
+  session:
+    addrs:
+      - localhost:6379
+    password: admin
+    db: 2
+
+mongo:
+  default:
+    uri: mongodb://admin:admin@localhost:27017/?authSource=admin
+    database: unicorn_system
+
+gateway:
+  devMode: true
+  introspection: true
+  configPath: "config/router.json"
+  configURL: ""

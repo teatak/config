@@ -20,16 +20,8 @@ type redis struct {
 
 type redisSection map[string]*redis
 
-func (s *redisSection) SectionName() string {
-	return "redis"
+func (s redisSection) Default() *redis {
+	return s["default"]
 }
 
-func (s *redisSection) Default() *redis {
-	return Redis["default"]
-}
-
-var Redis = redisSection{}
-
-func init() {
-	config.Load(&Redis)
-}
+var Redis = redisSection(config.RegisterMap[string, *redis]("redis"))

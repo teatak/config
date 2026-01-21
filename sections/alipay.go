@@ -12,16 +12,8 @@ type alipay struct {
 
 type alipaySection map[string]*alipay
 
-func (s alipaySection) SectionName() string {
-	return "alipay"
+func (s alipaySection) Default() *alipay {
+	return s["default"]
 }
 
-func (s *alipaySection) Default() *alipay {
-	return Alipay["default"]
-}
-
-var Alipay = alipaySection{}
-
-func init() {
-	config.Load(Alipay)
-}
+var Alipay = alipaySection(config.RegisterMap[string, *alipay]("alipay"))

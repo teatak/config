@@ -7,12 +7,4 @@ type github struct {
 	ClientSecret string `yaml:"clientSecret,omitempty"`
 }
 
-func (s *github) SectionName() string {
-	return "github"
-}
-
-var Github = &github{}
-
-func init() {
-	config.Load(Github)
-}
+var Github = config.Register(&github{})

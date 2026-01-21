@@ -14,16 +14,8 @@ type mongo struct {
 
 type mongoSection map[string]*mongo
 
-func (s *mongoSection) SectionName() string {
-	return "mongo"
+func (s mongoSection) Default() *mongo {
+	return s["default"]
 }
 
-func (s *mongoSection) Default() *mongo {
-	return Mongo["default"]
-}
-
-var Mongo = mongoSection{}
-
-func init() {
-	config.Load(&Mongo)
-}
+var Mongo = mongoSection(config.RegisterMap[string, *mongo]("mongo"))

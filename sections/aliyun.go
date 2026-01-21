@@ -9,16 +9,8 @@ type aliyun struct {
 
 type aliyunSection map[string]*aliyun
 
-func (s *aliyunSection) SectionName() string {
-	return "aliyun"
+func (s aliyunSection) Default() *aliyun {
+	return s["default"]
 }
 
-func (s *aliyunSection) Default() *aliyun {
-	return Aliyun["default"]
-}
-
-var Aliyun = aliyunSection{}
-
-func init() {
-	config.Load(&Aliyun)
-}
+var Aliyun = aliyunSection(config.RegisterMap[string, *aliyun]("aliyun"))

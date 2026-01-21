@@ -11,12 +11,4 @@ type server struct {
 	Port         int      `yaml:"port,omitempty"`
 }
 
-func (s *server) SectionName() string {
-	return "server"
-}
-
-var Server = &server{}
-
-func init() {
-	config.Load(Server)
-}
+var Server = config.Register(&server{})

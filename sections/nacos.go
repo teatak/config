@@ -14,12 +14,4 @@ type nacos struct {
 	Mode        string `yaml:"mode"` // merge or overwrite
 }
 
-func (n *nacos) SectionName() string {
-	return "nacos"
-}
-
-var Nacos = &nacos{}
-
-func init() {
-	config.Load(Nacos)
-}
+var Nacos = config.Register(&nacos{})
