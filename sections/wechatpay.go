@@ -11,10 +11,4 @@ type wechatpay struct {
 	NotifyUrl  string `yaml:"notifyUrl,omitempty"`
 }
 
-type wechatpaySection map[string]*wechatpay
-
-func (s wechatpaySection) Default() *wechatpay {
-	return s["default"]
-}
-
-var WechatPay = wechatpaySection(config.RegisterMap[string, *wechatpay]("wechatpay"))
+var WechatPay = config.RegisterMap[*wechatpay]("wechatpay")

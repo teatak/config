@@ -18,10 +18,4 @@ type redis struct {
 	SentinelPassword string `yaml:"sentinelPassword,omitempty"`
 }
 
-type redisSection map[string]*redis
-
-func (s redisSection) Default() *redis {
-	return s["default"]
-}
-
-var Redis = redisSection(config.RegisterMap[string, *redis]("redis"))
+var Redis = config.RegisterMap[*redis]("redis")

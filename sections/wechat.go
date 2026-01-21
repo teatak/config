@@ -7,10 +7,4 @@ type wechat struct {
 	AppSecret string `yaml:"appSecret,omitempty"`
 }
 
-type wechatSection map[string]*wechat
-
-func (s wechatSection) Default() *wechat {
-	return s["default"]
-}
-
-var Wechat = wechatSection(config.RegisterMap[string, *wechat]("wechat"))
+var Wechat = config.RegisterMap[*wechat]("wechat")

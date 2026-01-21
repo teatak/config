@@ -10,10 +10,4 @@ type alipay struct {
 	NotifyUrl  string `yaml:"notifyUrl,omitempty"`
 }
 
-type alipaySection map[string]*alipay
-
-func (s alipaySection) Default() *alipay {
-	return s["default"]
-}
-
-var Alipay = alipaySection(config.RegisterMap[string, *alipay]("alipay"))
+var Alipay = config.RegisterMap[*alipay]("alipay")

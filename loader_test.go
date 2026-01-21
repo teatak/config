@@ -77,8 +77,8 @@ func TestConfigChain(t *testing.T) {
 	srv := Register(&server{})
 	authCfg := Register(&auth{})
 	logCfg := Register(&logConfig{})
-	mongoMap := RegisterMap[string, *mongo]("mongo")
-	redisMap := RegisterMap[string, *redis]("redis")
+	mongoMap := RegisterMap[*mongo]("mongo")
+	redisMap := RegisterMap[*redis]("redis")
 	gw := Register(&gateway{})
 
 	// 验证 server (来自 dev.yaml)
@@ -179,7 +179,7 @@ func TestRegisterMap(t *testing.T) {
 
 	resetForTest()
 
-	mongoMap := RegisterMap[string, *mongo]("mongo")
+	mongoMap := RegisterMap[*mongo]("mongo")
 
 	if mongoMap["default"] == nil {
 		t.Fatal("Expected mongo['default'] to exist")
@@ -292,7 +292,7 @@ func TestRegisterMapUpdateConfig(t *testing.T) {
 
 	resetForTest()
 
-	mongoMap := RegisterMap[string, *mongo]("mongo")
+	mongoMap := RegisterMap[*mongo]("mongo")
 
 	// 验证初始值
 	if mongoMap["default"] == nil {

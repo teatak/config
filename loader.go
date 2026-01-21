@@ -95,17 +95,26 @@ func reloadAutoSection[T any](a *autoSection[T]) {
 	}
 }
 
+// SectionMap 是一个通用的泛型配置 Map，内置了 Default() 方法
+// V 是具体的配置结构体指针，例如 *mongo
+type SectionMap[V any] map[string]V
+
+// Default 获取 key 为 "default" 的配置项
+func (s SectionMap[V]) Default() V {
+	return s["default"]
+}
+
 // autoMapSection 是一个自动推断名称的 Map Section 包装器
-type autoMapSection[K comparable, V any] struct {
-	ptr  *map[K]V
+type autoMapSection[V any] struct {
+	ptr  *SectionMap[V]
 	name string
 }
 
-func (a *autoMapSection[K, V]) SectionName() string {
+func (a *autoMapSection[V]) SectionName() string {
 	return a.name
 }
 
-func (a *autoMapSection[K, V]) Reload(data interface{}) {
+func (a *autoMapSection[V]) Reload(data interface{}) {
 	if data == nil {
 		return
 	}
@@ -120,11 +129,11 @@ func (a *autoMapSection[K, V]) Reload(data interface{}) {
 }
 
 // RegisterMap 使用泛型注册 map 类型的配置 section
-// 用法: var Mongo = config.RegisterMap[string, *mongo]("mongo")
-// 适用于需要多实例配置的场景，如数据库连接池
-func RegisterMap[K comparable, V any](name string) map[K]V {
-	m := make(map[K]V)
-	wrapper := &autoMapSection[K, V]{ptr: &m, name: name}
+// 用法: var Mongo = config.RegisterMap[*mongo]("mongo")
+// 返回 config.SectionMap[*mongo] 类型，可以直接使用 ["key"] 或 .Default()
+func RegisterMap[V any](name string) SectionMap[V] {
+	m := make(SectionMap[V])
+	wrapper := &autoMapSection[V]{ptr: &m, name: name}
 
 	mu.Lock()
 	registry = append(registry, wrapper)
@@ -139,7 +148,7 @@ func RegisterMap[K comparable, V any](name string) map[K]V {
 	return m
 }
 
-func reloadAutoMapSection[K comparable, V any](a *autoMapSection[K, V]) {
+func reloadAutoMapSection[V any](a *autoMapSection[V]) {
 	s := loader.get(a.name)
 	if s == nil {
 		return

@@ -12,10 +12,4 @@ type mongo struct {
 	MaxConnecting     uint64 `yaml:"maxConnecting,omitempty"`
 }
 
-type mongoSection map[string]*mongo
-
-func (s mongoSection) Default() *mongo {
-	return s["default"]
-}
-
-var Mongo = mongoSection(config.RegisterMap[string, *mongo]("mongo"))
+var Mongo = config.RegisterMap[*mongo]("mongo")
