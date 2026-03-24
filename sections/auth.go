@@ -3,8 +3,9 @@ package sections
 import "github.com/teatak/config/v2"
 
 type auth struct {
-	JWTSecret string            `yaml:"jwt_secret" json:"jwt_secret"`
-	OAuth2    map[string]OAuth2 `yaml:"oauth2" json:"oauth2"`
+	JWTSecret      string            `yaml:"jwt_secret" json:"jwt_secret"`
+	InternalSecret []string          `yaml:"internal_secret"`
+	OAuth2         map[string]OAuth2 `yaml:"oauth2" json:"oauth2"`
 }
 
 type OAuth2 struct {
